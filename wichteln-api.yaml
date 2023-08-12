@@ -2,6 +2,9 @@ openapi: '3.0.5'
 info:
   title: Wichteln API
   version: 1.0.0
+servers:
+  - url: http://localhost:8080/wichteln/api
+    description: Server description
 paths:
   /users/${userId}/wichtelrunden:
     get:
@@ -35,16 +38,21 @@ components:
       pattern: '[A-Za-z0-9_-]+'
       minLength: 3
       maxLength: 12
+      example: 'mohrm'
     WichtelrundenId:
       type: string
       pattern: '[A-Za-z0-9]+'
       minLength: 12
       maxLength: 12
+      example: 'LKJwuqHaH71k'
     Wichtelrunde:
       type: object
       properties:
         id:
           $ref: '#/components/schemas/WichtelrundenId'
+        name:
+          type: string
+          example: 'Familienwichteln 2023'
 
   parameters:
     UserIdParam:
@@ -57,5 +65,5 @@ components:
       name: wichtelrundenId
       in: path
       required: true
-      $ref: '#/components/parameters/WichtelrundenIdParam'
+      $ref: '#/components/schemas/WichtelrundenId'
       
