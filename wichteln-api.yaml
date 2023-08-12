@@ -1,0 +1,47 @@
+openapi: '3.0.5'
+info:
+  title: Wichteln API
+  version: 1.0.0
+paths:
+  /users/${userId}/wichtelrunden:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wichtelrunde'
+
+components:
+  schemas:
+    UserId:
+      type: string
+      pattern: '[A-Za-z0-9_-]+'
+      minLength: 3
+      maxLength: 12
+    WichtelrundenId:
+      type: string
+      pattern: '[A-Za-z0-9]+'
+      minLength: 12
+      maxLength: 12
+    Wichtelrunde:
+      type: object
+      properties:
+  parameters:
+    UserIdParam:
+      name: userId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/UserId'
+    WichtelrundenIdParam:
+      name: wichtelrundenId
+      in: path
+      required: true
+      $ref: '#/components/parameters/WichtelrundenIdParam'
+      
