@@ -16,7 +16,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Wichtelrunde'
-
+  /users/${userId}/wichtelrunden/${wichtelrundenId}:
+    get:
+      parameters:
+        - $ref: '#/components/schemas/UserId'
+        - $ref: '#/components/schemas/WichtelrundenId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wichtelrunde'
 components:
   schemas:
     UserId:
