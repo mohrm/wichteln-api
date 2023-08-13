@@ -1,13 +1,44 @@
-openapi: '3.0.5'
+openapi: '3.1.0'
 info:
   title: Wichteln API
   version: 1.0.0
+license:
+  
 servers:
   - url: http://localhost:8080/wichteln/api
     description: Server description
+
+security:
+  - oidc_standard   
+
+
 paths:
-  /users/${userId}/wichtelrunden:
+  /users/{userId}:
     get:
+      description: gibt Informationen über einen gegebenen Benutzer zurück
+      security:
+        - oidc_standard: [read_user]
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        '401':
+          description: |
+            Dieser Endpunkt steht nur für authentifizierte Benutzer zur Verfügung.
+        '404':
+          description: |
+            Der angeforderte Benutzer entspricht nicht dem angemeldeten Benutzer.
+
+  /users/{userId}/wichtelrunden:
+    get:
+      description: Gibt zurück, an welchen Wichtelrunden ein gegebener Benutzer teilnimmt.
+      security:
+        - oidc_standard: [read_wichtelrunden]
       parameters:
         - $ref: '#/components/parameters/UserIdParam'
       responses:
@@ -19,11 +50,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Wichtelrunde'
-  /users/${userId}/wichtelrunden/${wichtelrundenId}:
+        '401':
+          description: |
+            Dieser Endpunkt steht nur für authentifizierte Benutzer zur Verfügung.
+        '404':
+          description: |
+            Der angeforderte Benutzer entspricht nicht dem angemeldeten Benutzer.
+  
+  /wichtelrunden/{wichtelrundenId}:
     get:
+      description: Gibt Informationen über die angegebene Wichtelrunde zurück.
+      security:
+        - oidc_standard: [read_wichtelrunden]      
       parameters:
-        - $ref: '#/components/schemas/UserId'
-        - $ref: '#/components/schemas/WichtelrundenId'
+        - $ref: '#/components/parameters/WichtelrundenIdParam'
       responses:
         '200':
           description: OK
@@ -31,6 +71,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Wichtelrunde'
+        '401':
+          description: |
+            Dieser Endpunkt steht nur für authentifizierte Benutzer zur Verfügung.
+        '404':
+          description: |
+            Entweder existiert die angeforderte Wichtelrunde nicht oder der angemeldete Benutzer ist kein Teilnehmer.
+
+  /wichtelrunden/{wichtelrundenId}/teilnehmer/{userId}:
+    get:
+      description: Gibt Informationen über den gegebenen Benutzer in der gegebenen Wichtelrunde zurück.
+      security:
+        - oidc_standard: [read_wichtelrunden]
+      parameters:
+        - $ref: '#/components/parameters/WichtelrundenIdParam'
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WichtelrundenteilnehmerInfo'
+        '401':
+          description: |
+            Dieser Endpunkt steht nur für authentifizierte Benutzer zur Verfügung.
+        '404':
+          description: |
+            Der angeforderte Benutzer ist entweder dem System nicht bekannt oder kein Teilnehmer der gegebenen Wichtelrunde,
+            oder er ist Teilnehmer der Wichtelrunde aber weder der angemeldete Benutzer noch dessen Wichtelziel.
+        
+
 components:
   schemas:
     UserId:
@@ -39,12 +110,29 @@ components:
       minLength: 3
       maxLength: 12
       example: 'mohrm'
+    UserInfo:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/UserId'
+        name:
+          $ref: '#/components/schemas/UserName'
+    UserName:
+      type: string
+      minLength: 2
+      maxLength: 50
+      example: 'Maja'
+    Wunsch:
+      type: string
+      minLength: 2
+      maxLength: 1024
+      example: 'Ultimatives Polizeieinsatzfahrzeug'
     WichtelrundenId:
       type: string
       pattern: '[A-Za-z0-9]+'
       minLength: 12
       maxLength: 12
-      example: 'LKJwuqHaH71k'
+      example: lkjdf2h14l23
     Wichtelrunde:
       type: object
       properties:
@@ -53,7 +141,15 @@ components:
         name:
           type: string
           example: 'Familienwichteln 2023'
+    WichtelrundenteilnehmerInfo:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/UserName'
+        wunsch:
+          $ref: '#/components/schemas/Wunsch'
 
+      
   parameters:
     UserIdParam:
       name: userId
@@ -65,5 +161,18 @@ components:
       name: wichtelrundenId
       in: path
       required: true
-      $ref: '#/components/schemas/WichtelrundenId'
+      schema:
+        $ref: '#/components/schemas/WichtelrundenId'
+
+  securitySchemes:
+    oidc_standard:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8080/auth
+          tokenUrl: http://localhost:8080/token
+          scopes:
+            openid: Benutzerinformationen via OpenID Connect
+            read_user: Benutzerinformationen innerhalb der Anwendung lesen
+            read_wichtelrunden: Wichtelrundeninformationen lesen
       
