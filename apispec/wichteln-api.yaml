@@ -109,7 +109,7 @@ paths:
 components:
   schemas:
     UserId:
-      $ref: "../schemas/UserId.yaml"
+      $ref: "./schemas/UserId.yaml"
     UserInfo:
       type: object
       properties:
