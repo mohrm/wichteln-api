@@ -2,20 +2,22 @@ openapi: '3.1.0'
 info:
   title: Wichteln API
   version: 1.0.0
-license:
+  contact:
+    url: https://github.com/mohrm
   
 servers:
   - url: http://localhost:8080/wichteln/api
     description: Server description
 
 security:
-  - oidc_standard   
+  - oidc_standard: []
 
 
 paths:
   /users/{userId}:
     get:
       description: gibt Informationen über einen gegebenen Benutzer zurück
+      operationId: getUserById
       security:
         - oidc_standard: [read_user]
       parameters:
@@ -37,6 +39,7 @@ paths:
   /users/{userId}/wichtelrunden:
     get:
       description: Gibt zurück, an welchen Wichtelrunden ein gegebener Benutzer teilnimmt.
+      operationId: getWichtelrundenByUserId
       security:
         - oidc_standard: [read_wichtelrunden]
       parameters:
@@ -60,6 +63,7 @@ paths:
   /wichtelrunden/{wichtelrundenId}:
     get:
       description: Gibt Informationen über die angegebene Wichtelrunde zurück.
+      operationId: getWichtelrundeById
       security:
         - oidc_standard: [read_wichtelrunden]      
       parameters:
@@ -105,11 +109,7 @@ paths:
 components:
   schemas:
     UserId:
-      type: string
-      pattern: '[A-Za-z0-9_-]+'
-      minLength: 3
-      maxLength: 12
-      example: 'mohrm'
+      $ref: "../schemas/UserId.yaml"
     UserInfo:
       type: object
       properties:
@@ -140,6 +140,8 @@ components:
           $ref: '#/components/schemas/WichtelrundenId'
         name:
           type: string
+          minLength: 5
+          maxLength: 100
           example: 'Familienwichteln 2023'
     WichtelrundenteilnehmerInfo:
       type: object
