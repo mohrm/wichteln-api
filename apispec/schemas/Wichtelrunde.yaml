@@ -1,0 +1,9 @@
+type: object
+properties:
+  id:
+    $ref: './WichtelrundenId.yaml'
+  name:
+    type: string
+    minLength: 5
+    maxLength: 100
+    example: 'Familienwichteln 2023'

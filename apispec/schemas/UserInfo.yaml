@@ -1,0 +1,6 @@
+type: object
+properties:
+  userId:
+    $ref: './UserId.yaml'
+  name:
+    $ref: './UserName.yaml'

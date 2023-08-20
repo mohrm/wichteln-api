@@ -85,6 +85,7 @@ paths:
   /wichtelrunden/{wichtelrundenId}/teilnehmer/{userId}:
     get:
       description: Gibt Informationen über den gegebenen Benutzer in der gegebenen Wichtelrunde zurück.
+      operationId: getTeilnehmerInfo
       security:
         - oidc_standard: [read_wichtelrunden]
       parameters:
@@ -109,49 +110,19 @@ paths:
 components:
   schemas:
     UserId:
-      $ref: "./schemas/UserId.yaml"
+      $ref: './schemas/UserId.yaml'
     UserInfo:
-      type: object
-      properties:
-        userId:
-          $ref: '#/components/schemas/UserId'
-        name:
-          $ref: '#/components/schemas/UserName'
+      $ref: './schemas/UserInfo.yaml'
     UserName:
-      type: string
-      minLength: 2
-      maxLength: 50
-      example: 'Maja'
+      $ref: './schemas/UserName.yaml'
     Wunsch:
-      type: string
-      minLength: 2
-      maxLength: 1024
-      example: 'Ultimatives Polizeieinsatzfahrzeug'
+      $ref: './schemas/Wunsch.yaml'
     WichtelrundenId:
-      type: string
-      pattern: '[A-Za-z0-9]+'
-      minLength: 12
-      maxLength: 12
-      example: lkjdf2h14l23
+      $ref: './schemas/WichelrundenId.yaml'
     Wichtelrunde:
-      type: object
-      properties:
-        id:
-          $ref: '#/components/schemas/WichtelrundenId'
-        name:
-          type: string
-          minLength: 5
-          maxLength: 100
-          example: 'Familienwichteln 2023'
+      $ref: './schemas/Wichtelrunde.yaml'
     WichtelrundenteilnehmerInfo:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/UserName'
-        wunsch:
-          $ref: '#/components/schemas/Wunsch'
-
-      
+      $ref: './schemas/Wichtelrundenteilnehmerinfo.yaml'
   parameters:
     UserIdParam:
       name: userId
